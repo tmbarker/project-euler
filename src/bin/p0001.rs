@@ -1,4 +1,4 @@
-pub fn solve() {
+fn main(){
     println!("Problem 1: Multiples of 3 or 5 => {0}", sum_multiples(1000));
 }
 

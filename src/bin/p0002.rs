@@ -1,11 +1,11 @@
-use crate::utilities::sequences;
+use utils::seqs::Fibonacci;
 
-pub fn solve() {
+fn main(){
     println!("Problem 2: Even Fibonacci Numbers => {0}", even_fibonacci(4000000));
 }
 
 fn even_fibonacci(x: u32) -> u32 {
-    sequences::Fibonacci::<u32>::new()
+    Fibonacci::<u32>::new()
         .take_while(|&n| n <= x)
         .filter(|&n| n % 2 == 0)
         .sum()

@@ -1,9 +1,13 @@
 [package]
 name = "project-euler"
+authors = ["Trevor Barker <tmbarker9@gmail.com>"]
+repository = "https://github.com/tmbarker/project-euler"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "utils"
+path = "src/utils/mod.rs"
 
 [dependencies]
-num = "0.4.1"
+num-traits = "0.2.17"

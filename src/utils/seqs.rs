@@ -1,28 +1,23 @@
-use num::traits::One;
-use num::traits::Zero;
+use num_traits::{One, Zero};
 use std::ops::Add;
 
 pub struct Fibonacci<T>
-where
-    T: Zero + One + Copy,
 {
     m: T,
     n: T,
 }
 
-impl<T: Zero + One + Copy> Fibonacci<T> {
-    pub fn new() -> Fibonacci<T> {
+impl<T: Zero + One> Fibonacci<T> {
+    pub fn new() -> Self {
         Fibonacci::start_at(Zero::zero(), One::one())
     }
 
-    pub fn start_at(m: T, n: T) -> Fibonacci<T> {
+    pub fn start_at(m: T, n: T) -> Self {
         Fibonacci { m, n }
     }
 }
 
-impl<T> Default for Fibonacci<T>
-where
-    T: Zero + One + Copy,
+impl<T: Zero + One> Default for Fibonacci<T>
 {
     fn default() -> Self {
         Fibonacci::new()
