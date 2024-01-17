@@ -1,3 +1,4 @@
+use num_integer::Integer;
 use utils::seqs::Fibonacci;
 
 fn main(){
@@ -7,7 +8,7 @@ fn main(){
 fn even_fibonacci(x: u32) -> u32 {
     Fibonacci::<u32>::new()
         .take_while(|&n| n <= x)
-        .filter(|&n| n % 2 == 0)
+        .filter(|&n| n.is_even())
         .sum()
 }
 
