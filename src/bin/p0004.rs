@@ -8,13 +8,13 @@ const RADIX: usize = 10;
 
 fn largest_palindrome_product(d: u32) -> usize {
     let min = RADIX.pow(d - 1);
-    let max = RADIX.pow(d);
+    let max = RADIX.pow(d) - 1;
 
     let mut p: usize;
     let mut n: usize = 0;
 
-    for a in (min..max).rev() {
-        for b in (a..max).rev() {
+    for a in (min..=max).rev() {
+        for b in (a..=max).rev() {
             p = a * b;
             if p <= n {
                 break;

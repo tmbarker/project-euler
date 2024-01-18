@@ -3,7 +3,7 @@ fn main() {
 }
 
 fn smallest_multiple(x: usize) -> usize {
-    (1..(x + 1)).fold(1, |lcm, n| num_integer::lcm(lcm, n))
+    (1..=x).fold(1, |lcm, n| num_integer::lcm(lcm, n))
 }
 
 #[test]
