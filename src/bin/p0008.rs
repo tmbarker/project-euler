@@ -22,7 +22,10 @@ const DIGITS: &str = r"
 ";
 
 fn main() {
-    println!("Problem 8: Largest Product in a Series => {0}", max_window_product(13));
+    println!(
+        "Problem 8: Largest Product in a Series => {0}",
+        max_window_product(13)
+    );
 }
 
 fn max_window_product(len: usize) -> u64 {

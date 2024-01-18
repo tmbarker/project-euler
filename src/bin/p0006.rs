@@ -1,5 +1,8 @@
 fn main() {
-    println!("Problem 6: Sum Square Difference => {0}", sum_square_difference(100));
+    println!(
+        "Problem 6: Sum Square Difference => {0}",
+        sum_square_difference(100)
+    );
 }
 
 fn sum_square_difference(n: usize) -> usize {

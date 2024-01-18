@@ -1,7 +1,10 @@
-use utils::primes::{PrimeGen, Factorize};
+use utils::primes::{Factorize, PrimeGen};
 
-fn main(){
-    println!("Problem 3: Largest Prime Factor => {0}", largest_prime_factor(600851475143));
+fn main() {
+    println!(
+        "Problem 3: Largest Prime Factor => {0}",
+        largest_prime_factor(600851475143)
+    );
 }
 
 fn largest_prime_factor(x: u64) -> u64 {

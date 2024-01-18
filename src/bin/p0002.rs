@@ -1,8 +1,11 @@
 use num_integer::Integer;
 use utils::seqs::Fibonacci;
 
-fn main(){
-    println!("Problem 2: Even Fibonacci Numbers => {0}", even_fibonacci(4000000));
+fn main() {
+    println!(
+        "Problem 2: Even Fibonacci Numbers => {0}",
+        even_fibonacci(4000000)
+    );
 }
 
 fn even_fibonacci(x: u32) -> u32 {

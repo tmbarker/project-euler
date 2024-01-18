@@ -1,7 +1,10 @@
 use utils::integers::Integer;
 
 fn main() {
-    println!("Problem 4: Largest Palindrome Product => {0}", largest_palindrome_product(3));
+    println!(
+        "Problem 4: Largest Palindrome Product => {0}",
+        largest_palindrome_product(3)
+    );
 }
 
 const RADIX: usize = 10;

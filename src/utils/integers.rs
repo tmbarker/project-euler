@@ -1,6 +1,6 @@
 use num_traits::{FromPrimitive, One, ToPrimitive, Zero};
 
-/// Super trait extension of num_integer::Integer which is useful for Project Euler problems
+/// Super trait extension of num_integer::Integer which is useful for Project Euler problems.
 pub trait Integer: num_integer::Integer + Clone + FromPrimitive + ToPrimitive {
     #[inline]
     fn into_digits(self, radix: Self) -> Digits<Self> {
