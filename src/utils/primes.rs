@@ -34,7 +34,7 @@ impl PrimeGen {
         Self::from_inner(PrimeInner::seeded(capacity))
     }
 
-    /// Compute the nth prime.
+    /// Compute the n<sup>th</sup> prime, where n is zero-indexed.
     #[inline]
     pub fn nth(&self, n: usize) -> u64 {
         self.data.borrow_mut().compute_nth(n)
