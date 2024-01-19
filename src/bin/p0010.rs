@@ -6,7 +6,7 @@ fn main() {
 }
 
 fn sum_primes(n: u64) -> u64 {
-    utils::primes::PrimeGen::new()
+    utils::primes::PrimeSeq::new()
         .iter()
         .take_while(|&p| p < n)
         .sum()

@@ -1,4 +1,4 @@
-use utils::integers::Integer;
+use utils::integer::Integer;
 
 fn main() {
     println!(

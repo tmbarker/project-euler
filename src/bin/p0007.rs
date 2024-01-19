@@ -3,7 +3,7 @@ fn main() {
 }
 
 fn nth_prime(n: usize) -> u64 {
-    utils::primes::PrimeGen::seeded(n).nth(n - 1)
+    utils::primes::PrimeSeq::seeded(n).nth(n - 1)
 }
 
 #[test]

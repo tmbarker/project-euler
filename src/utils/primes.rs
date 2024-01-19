@@ -1,5 +1,5 @@
 use num_integer::Integer;
-use num_traits::{FromPrimitive, One};
+use num_traits::{FromPrimitive, Zero, One};
 use std::{cell::RefCell, mem, rc::Rc};
 
 const INITIAL_CAPACITY: usize = 10000;
@@ -17,11 +17,11 @@ const SEED_PRIMES: &[u64] = &[
 
 /// Prime number generator.
 #[derive(Clone)]
-pub struct PrimeGen {
+pub struct PrimeSeq {
     data: Rc<RefCell<PrimeInner>>,
 }
 
-impl PrimeGen {
+impl PrimeSeq {
     /// Construct a new prime number generator, containing only the first and second prime.
     #[inline]
     pub fn new() -> Self {
@@ -47,8 +47,8 @@ impl PrimeGen {
     }
 
     /// Get an iterator which yields primes in ascending order.
-    pub fn iter(&self) -> PrimeSeq {
-        PrimeSeq {
+    pub fn iter(&self) -> PrimeSeqIter {
+        PrimeSeqIter {
             idx: 0,
             data: self.data.clone(),
         }
@@ -56,19 +56,19 @@ impl PrimeGen {
 
     #[inline]
     fn from_inner(gen: PrimeInner) -> Self {
-        PrimeGen {
+        PrimeSeq {
             data: Rc::new(RefCell::new(gen)),
         }
     }
 }
 
 /// Prime number sequence iterator.
-pub struct PrimeSeq {
+pub struct PrimeSeqIter {
     idx: usize,
     data: Rc<RefCell<PrimeInner>>,
 }
 
-impl Iterator for PrimeSeq {
+impl Iterator for PrimeSeqIter {
     type Item = u64;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -85,23 +85,23 @@ pub struct Factor<T> {
 }
 
 /// An iterator which lazily yields the prime factors of a number.
-pub struct Factors<T> {
+pub struct FactorIter<T> {
     num: T,
-    primes: PrimeSeq,
+    primes: PrimeSeqIter,
 }
 
 /// Numbers which can be factorized.
 pub trait Factorize: Integer + FromPrimitive + Clone {
     /// An iterator yielding all prime factors in ascending order.
-    fn factorize(&self, pg: &PrimeGen) -> Factors<Self>;
+    fn factorize(&self, pg: &PrimeSeq) -> FactorIter<Self>;
 }
 
 /// Implement the Factorize trait for an unsigned integer type.
 macro_rules! factorize_trait_impl_unsigned {
     ($($t:ty)*) => ($(
         impl Factorize for $t {
-            fn factorize(&self, ps: &PrimeGen) -> Factors<$t> {
-                Factors { num: *self, primes: ps.iter() }
+            fn factorize(&self, ps: &PrimeSeq) -> FactorIter<$t> {
+                FactorIter { num: *self, primes: ps.iter() }
             }
         }
     )*)
@@ -111,11 +111,11 @@ macro_rules! factorize_trait_impl_unsigned {
 macro_rules! factorize_trait_impl_signed {
     ($($t:ty)*) => ($(
         impl Factorize for $t {
-            fn factorize(&self, ps: &PrimeGen) -> Factors<$t> {
+            fn factorize(&self, ps: &PrimeSeq) -> FactorIter<$t> {
                 if *self < 0 {
-                    Factors { num: -*self, primes: ps.iter() }
+                    FactorIter { num: -*self, primes: ps.iter() }
                 } else {
-                    Factors { num: *self, primes: ps.iter() }
+                    FactorIter { num: *self, primes: ps.iter() }
                 }
             }
         }
@@ -125,7 +125,7 @@ macro_rules! factorize_trait_impl_signed {
 factorize_trait_impl_unsigned!(usize u8 u16 u32 u64);
 factorize_trait_impl_signed!(isize i8 i16 i32 i64);
 
-impl<T: Integer + FromPrimitive + Clone> Iterator for Factors<T> {
+impl<T: Integer + FromPrimitive + Clone> Iterator for FactorIter<T> {
     type Item = Factor<T>;
 
     fn next(&mut self) -> Option<Factor<T>> {

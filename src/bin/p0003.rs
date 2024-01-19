@@ -1,4 +1,4 @@
-use utils::primes::{Factorize, PrimeGen};
+use utils::primes::{Factorize, PrimeSeq};
 
 fn main() {
     println!(
@@ -8,7 +8,7 @@ fn main() {
 }
 
 fn largest_prime_factor(x: u64) -> u64 {
-    x.factorize(&PrimeGen::new())
+    x.factorize(&PrimeSeq::new())
         .map(|factor| factor.base)
         .max()
         .unwrap()
