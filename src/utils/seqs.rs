@@ -120,3 +120,41 @@ where
         Some(mem::replace(&mut self.n, next))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{CollatzIter, FibonacciIter, TriangularIter};
+
+    #[test]
+    fn fibonacci() {
+        let mut fib = FibonacciIter::<usize>::new();
+        assert_eq!(fib.next(), Some(0));
+        assert_eq!(fib.next(), Some(1));
+        assert_eq!(fib.next(), Some(1));
+        assert_eq!(fib.next(), Some(2));
+        assert_eq!(fib.next(), Some(3));
+        assert_eq!(fib.next(), Some(5));
+    }
+
+    #[test]
+    fn triangular() {
+        let mut tri = TriangularIter::<usize>::new();
+        assert_eq!(tri.next(), Some(1));
+        assert_eq!(tri.next(), Some(3));
+        assert_eq!(tri.next(), Some(6));
+        assert_eq!(tri.next(), Some(10));
+        assert_eq!(tri.next(), Some(15));
+        assert_eq!(tri.next(), Some(21));
+    }
+
+    #[test]
+    fn collatz() {
+        let mut col = CollatzIter::<usize>::start_at(13);
+        assert_eq!(col.next(), Some(13));
+        assert_eq!(col.next(), Some(40));
+        assert_eq!(col.next(), Some(20));
+        assert_eq!(col.next(), Some(10));
+        assert_eq!(col.next(), Some(5));
+        assert_eq!(col.next(), Some(16));
+    }
+}

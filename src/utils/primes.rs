@@ -85,7 +85,7 @@ pub struct Factor<T> {
 }
 
 /// An iterator which lazily yields the prime factors of a number.
-pub struct FactorIter<T> {
+pub struct FactorsIter<T> {
     num: T,
     primes: PrimeSeqIter,
 }
@@ -93,7 +93,7 @@ pub struct FactorIter<T> {
 /// Numbers which can be factorized.
 pub trait Factorize: Integer + FromPrimitive + Clone {
     /// An iterator yielding all prime factors in ascending order.
-    fn factorize(&self, ps: &PrimeSeq) -> FactorIter<Self>;
+    fn factorize(&self, ps: &PrimeSeq) -> FactorsIter<Self>;
 
     /// Compute the number of divisors of the the number.
     fn num_divisors(&self, ps: &PrimeSeq) -> u64 {
@@ -112,8 +112,8 @@ pub trait Factorize: Integer + FromPrimitive + Clone {
 macro_rules! factorize_trait_impl_unsigned {
     ($($t:ty)*) => ($(
         impl Factorize for $t {
-            fn factorize(&self, ps: &PrimeSeq) -> FactorIter<$t> {
-                FactorIter { num: *self, primes: ps.iter() }
+            fn factorize(&self, ps: &PrimeSeq) -> FactorsIter<$t> {
+                FactorsIter { num: *self, primes: ps.iter() }
             }
         }
     )*)
@@ -123,11 +123,11 @@ macro_rules! factorize_trait_impl_unsigned {
 macro_rules! factorize_trait_impl_signed {
     ($($t:ty)*) => ($(
         impl Factorize for $t {
-            fn factorize(&self, ps: &PrimeSeq) -> FactorIter<$t> {
+            fn factorize(&self, ps: &PrimeSeq) -> FactorsIter<$t> {
                 if *self < 0 {
-                    FactorIter { num: -*self, primes: ps.iter() }
+                    FactorsIter { num: -*self, primes: ps.iter() }
                 } else {
-                    FactorIter { num: *self, primes: ps.iter() }
+                    FactorsIter { num: *self, primes: ps.iter() }
                 }
             }
         }
@@ -137,7 +137,7 @@ macro_rules! factorize_trait_impl_signed {
 factorize_trait_impl_unsigned!(usize u8 u16 u32 u64);
 factorize_trait_impl_signed!(isize i8 i16 i32 i64);
 
-impl<T: Integer + FromPrimitive + Clone> Iterator for FactorIter<T> {
+impl<T: Integer + FromPrimitive + Clone> Iterator for FactorsIter<T> {
     type Item = Factor<T>;
 
     fn next(&mut self) -> Option<Factor<T>> {
@@ -240,6 +240,61 @@ impl PrimeInner {
                     return;
                 }
             }
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{Factorize, PrimeSeq};
+
+    #[test]
+    fn iter() {
+        assert_eq!(
+            super::SEED_PRIMES,
+            &PrimeSeq::new()
+                .iter()
+                .take(super::SEED_PRIMES.len())
+                .collect::<Vec<_>>()[..]
+        )
+    }
+
+    #[test]
+    fn is_prime() {
+        let primes = PrimeSeq::new();
+        assert!(!primes.is_prime(0));
+        assert!(!primes.is_prime(1));
+        assert!(primes.is_prime(2));
+        assert!(primes.is_prime(3));
+        assert!(primes.is_prime(5));
+        assert!(primes.is_prime(7));
+        assert!(primes.is_prime(11));
+        assert!(primes.is_prime(13));
+        assert!(!primes.is_prime(99));
+        assert!(!primes.is_prime(100));
+    }
+
+    #[test]
+    fn num_divisor() {
+        let pairs = &[
+            (0, 0),
+            (1, 1),
+            (2, 2),
+            (3, 2),
+            (4, 3),
+            (5, 2),
+            (12, 6),
+            (24, 8),
+            (36, 9),
+            (48, 10),
+            (60, 12),
+            (50, 6),
+        ];
+
+        let ps = PrimeSeq::new();
+        for &(n, num_div) in pairs {
+            assert_eq!(num_div, n.num_divisors(&ps));
+            assert_eq!(num_div, (-n).num_divisors(&ps));
         }
     }
 }

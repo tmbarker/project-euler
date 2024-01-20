@@ -1,6 +1,6 @@
 use num_traits::{FromPrimitive, One, ToPrimitive, Zero};
 
-/// Super trait extension of num_integer::Integer which is useful for Project Euler problems.
+/// Super trait extension of `num_integer::Integer`, which is useful for Project Euler problems.
 pub trait Integer: num_integer::Integer + Clone + FromPrimitive + ToPrimitive {
     #[inline]
     fn into_digits(self, radix: Self) -> Digits<Self> {
@@ -12,7 +12,7 @@ pub trait Integer: num_integer::Integer + Clone + FromPrimitive + ToPrimitive {
         Digits::new(self.clone(), radix)
     }
 
-    /// Returns `true` if the number is palindromic.
+    /// Returns `true` if the number is unchanged when its digits are reversed.
     fn is_palindromic(&self, radix: Self) -> bool {
         let mut digits = self.to_digits(radix);
         loop {
@@ -25,6 +25,20 @@ pub trait Integer: num_integer::Integer + Clone + FromPrimitive + ToPrimitive {
                 return false;
             }
         }
+    }
+
+    /// Returns the factorial (!) of the number, which is equal to the product of all
+    /// positive integers less than or equal to the given positive integer.
+    fn factorial(&self) -> Self {
+        assert!(*self >= Zero::zero());
+
+        let mut p: Self = One::one();
+        let mut i: Self = One::one();
+        while i <= *self {
+            p = p * i.clone();
+            i = i + One::one();
+        }
+        p
     }
 }
 
@@ -92,5 +106,49 @@ impl<T: num_integer::Integer + Clone> DoubleEndedIterator for Digits<T> {
         self.num = r;
         self.order = self.order.clone() / self.radix.clone();
         Some(d)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Integer;
+
+    #[test]
+    fn digits_iter() {
+        const NUMBER: usize = 1234;
+        const RADIX: usize = 10;
+
+        let mut f_iter = NUMBER.to_digits(RADIX);
+        assert_eq!(f_iter.next(), Some(4));
+        assert_eq!(f_iter.next(), Some(3));
+        assert_eq!(f_iter.next(), Some(2));
+        assert_eq!(f_iter.next(), Some(1));
+
+        let mut r_iter = NUMBER.to_digits(RADIX);
+        assert_eq!(r_iter.next_back(), Some(1));
+        assert_eq!(r_iter.next_back(), Some(2));
+        assert_eq!(r_iter.next_back(), Some(3));
+        assert_eq!(r_iter.next_back(), Some(4));
+    }
+
+    #[test]
+    fn is_palindromic() {
+        const RADIX: usize = 10;
+        assert!(0.is_palindromic(RADIX));
+        assert!(1.is_palindromic(RADIX));
+        assert!(11.is_palindromic(RADIX));
+        assert!(121.is_palindromic(RADIX));
+        assert!(!10.is_palindromic(RADIX));
+        assert!(!100.is_palindromic(RADIX));
+        assert!(!122.is_palindromic(RADIX));
+    }
+
+    #[test]
+    fn factorial() {
+        assert_eq!(1, 0.factorial());
+        assert_eq!(1, 1.factorial());
+        assert_eq!(2, 2.factorial());
+        assert_eq!(6, 3.factorial());
+        assert_eq!(3628800, 10.factorial());
     }
 }
