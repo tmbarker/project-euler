@@ -1,5 +1,5 @@
 use num_integer::Integer;
-use num_traits::{FromPrimitive, Zero, One};
+use num_traits::{FromPrimitive, One, Zero};
 use std::{cell::RefCell, mem, rc::Rc};
 
 const INITIAL_CAPACITY: usize = 10000;
@@ -93,7 +93,19 @@ pub struct FactorIter<T> {
 /// Numbers which can be factorized.
 pub trait Factorize: Integer + FromPrimitive + Clone {
     /// An iterator yielding all prime factors in ascending order.
-    fn factorize(&self, pg: &PrimeSeq) -> FactorIter<Self>;
+    fn factorize(&self, ps: &PrimeSeq) -> FactorIter<Self>;
+
+    /// Compute the number of divisors of the the number.
+    fn num_divisors(&self, ps: &PrimeSeq) -> u64 {
+        if self.is_zero() {
+            return Zero::zero();
+        }
+
+        // This is an implementation of the Tau function (divisor function)
+        self.factorize(ps)
+            .map(|factor| (factor.exp as u64) + 1)
+            .product()
+    }
 }
 
 /// Implement the Factorize trait for an unsigned integer type.
