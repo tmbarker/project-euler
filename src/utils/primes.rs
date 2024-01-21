@@ -1,6 +1,7 @@
 use num_integer::Integer;
 use num_traits::{FromPrimitive, One, Zero};
-use std::{cell::RefCell, mem, rc::Rc};
+use std::collections::hash_map::Entry::{Occupied, Vacant};
+use std::{cell::RefCell, collections::HashMap, hash::Hash, mem, rc::Rc};
 
 const INITIAL_CAPACITY: usize = 10000;
 const SEED_PRIMES: &[u64] = &[
@@ -52,6 +53,18 @@ impl PrimeSeq {
             idx: 0,
             data: self.data.clone(),
         }
+    }
+
+    /// Calculate the combination nCr.
+    pub fn combinations(&self, n: u64, k: u64) -> u64 {
+        let mut factorized = Factorized::<u64>::new(self);
+        for i in (n - k + 1)..=n {
+            factorized.mul(i);
+        }
+        for i in 1..=k {
+            factorized.div(i);
+        }
+        factorized.into_integer()
     }
 
     #[inline]
@@ -167,6 +180,71 @@ impl<T: Integer + FromPrimitive + Clone> Iterator for FactorsIter<T> {
         }
 
         unreachable!()
+    }
+}
+
+/// A factorized number that provides multiply and divide methods which try to avoid overflow.
+pub struct Factorized<'a, T> {
+    ps: &'a PrimeSeq,
+    factors: HashMap<T, i32>,
+}
+
+impl<'a, T: Factorize + Eq + Hash> Factorized<'a, T> {
+    /// Create a new factorized number representing the integer `1`.
+    pub fn new(ps: &PrimeSeq) -> Factorized<'_, T> {
+        Factorized {
+            ps,
+            factors: HashMap::new(),
+        }
+    }
+
+    /// Create a factorized number from an integer type.
+    pub fn from_integer(ps: &PrimeSeq, n: T) -> Factorized<'_, T> {
+        Factorized {
+            ps,
+            factors: n.factorize(ps).map(|f| (f.base, f.exp)).collect(),
+        }
+    }
+
+    /// Convert the factorized number into an integer type.
+    pub fn into_integer(self) -> T {
+        self.factors
+            .into_iter()
+            .fold::<T, _>(One::one(), |prod, (base, exp)| {
+                if exp >= 0 {
+                    prod * num_traits::pow(base, exp as usize)
+                } else {
+                    prod / num_traits::pow(base, (-exp) as usize)
+                }
+            })
+    }
+
+    /// Multiplies the given number into the factorized number.
+    pub fn mul(&mut self, n: T) {
+        for factor in n.factorize(self.ps) {
+            match self.factors.entry(factor.base) {
+                Vacant(entry) => {
+                    entry.insert(factor.exp);
+                }
+                Occupied(entry) => {
+                    *entry.into_mut() += factor.exp;
+                }
+            }
+        }
+    }
+
+    /// Divides the factorized number by the given number.
+    pub fn div(&mut self, n: T) {
+        for factor in n.factorize(self.ps) {
+            match self.factors.entry(factor.base) {
+                Vacant(entry) => {
+                    entry.insert(-factor.exp);
+                }
+                Occupied(entry) => {
+                    *entry.into_mut() -= factor.exp;
+                }
+            }
+        }
     }
 }
 
