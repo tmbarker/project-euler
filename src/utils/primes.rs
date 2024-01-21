@@ -1,7 +1,15 @@
 use num_integer::Integer;
 use num_traits::{FromPrimitive, One, Zero};
-use std::collections::hash_map::Entry::{Occupied, Vacant};
-use std::{cell::RefCell, collections::HashMap, hash::Hash, mem, rc::Rc};
+use std::{
+    cell::RefCell,
+    collections::{
+        hash_map::Entry::{Occupied, Vacant},
+        HashMap,
+    },
+    hash::Hash,
+    mem,
+    rc::Rc,
+};
 
 const INITIAL_CAPACITY: usize = 10000;
 const SEED_PRIMES: &[u64] = &[
@@ -57,11 +65,25 @@ impl PrimeSeq {
 
     /// Calculate the combination nCr.
     pub fn combinations(&self, n: u64, k: u64) -> u64 {
+        assert!(n >= k);
         let mut factorized = Factorized::<u64>::new(self);
         for i in (n - k + 1)..=n {
             factorized.mul(i);
         }
         for i in 1..=k {
+            factorized.div(i);
+        }
+        factorized.into_integer()
+    }
+
+    /// Calculate the permutation nPr.
+    pub fn permutations(&self, n: u64, k: u64) -> u64 {
+        assert!(n >= k);
+        let mut factorized = Factorized::<u64>::new(self);
+        for i in 1..=n {
+            factorized.mul(i);
+        }
+        for i in 1..=(n - k) {
             factorized.div(i);
         }
         factorized.into_integer()
@@ -327,7 +349,7 @@ mod tests {
     use super::{Factorize, PrimeSeq};
 
     #[test]
-    fn iter() {
+    fn prime_seq_iter() {
         assert_eq!(
             super::SEED_PRIMES,
             &PrimeSeq::new()
@@ -374,5 +396,23 @@ mod tests {
             assert_eq!(num_div, n.num_divisors(&ps));
             assert_eq!(num_div, (-n).num_divisors(&ps));
         }
+    }
+
+    #[test]
+    fn combination() {
+        let ps = PrimeSeq::new();
+        assert_eq!(ps.combinations(1, 1), 1);
+        assert_eq!(ps.combinations(5, 3), 10);
+        assert_eq!(ps.combinations(12, 5), 792);
+        assert_eq!(ps.combinations(18, 4), 3060);
+    }
+
+    #[test]
+    fn permutation() {
+        let ps = PrimeSeq::new();
+        assert_eq!(ps.permutations(1, 1), 1);
+        assert_eq!(ps.permutations(4, 3), 24);
+        assert_eq!(ps.permutations(8, 3), 336);
+        assert_eq!(ps.permutations(10, 4), 5040);
     }
 }
