@@ -32,12 +32,12 @@ impl<T: Zero + One> Default for FibonacciIter<T> {
     }
 }
 
-impl<T: Zero + One + Add<T, Output = T> + Copy> Iterator for FibonacciIter<T> {
+impl<T: Zero + One + Add<T, Output = T> + Clone> Iterator for FibonacciIter<T> {
     type Item = T;
 
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {
-        let new_n = self.m + self.n;
+        let new_n = self.m.clone() + self.n.clone();
         let new_m = mem::replace(&mut self.n, new_n);
         let cur_m = mem::replace(&mut self.m, new_m);
         Some(cur_m)

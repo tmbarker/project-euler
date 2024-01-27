@@ -130,7 +130,7 @@ pub trait Factorize: Integer + FromPrimitive + Clone {
     /// An iterator yielding all prime factors in ascending order.
     fn factorize(&self, ps: &PrimeSeq) -> FactorsIter<Self>;
 
-    /// Compute the number of divisors of the the number.
+    /// Compute the number of divisors of the number.
     fn num_divisors(&self, ps: &PrimeSeq) -> u64 {
         if self.is_zero() {
             return Zero::zero();
