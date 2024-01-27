@@ -10,5 +10,6 @@ name = "utils"
 path = "src/utils/mod.rs"
 
 [dependencies]
+num-bigint = "0.4.4"
 num-integer = "0.1.45"
 num-traits = "0.2.17"
