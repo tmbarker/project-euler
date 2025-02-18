@@ -97,6 +97,13 @@ impl PrimeSeq {
     }
 }
 
+impl Default for PrimeSeq {
+    #[inline]
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 /// Prime number sequence iterator.
 pub struct PrimeSeqIter {
     idx: usize,
@@ -211,7 +218,7 @@ pub struct Factorized<'a, T> {
     factors: HashMap<T, i32>,
 }
 
-impl<'a, T: Factorize + Eq + Hash> Factorized<'a, T> {
+impl<T: Factorize + Eq + Hash> Factorized<'_, T> {
     /// Create a new factorized number representing the integer `1`.
     pub fn new(ps: &PrimeSeq) -> Factorized<'_, T> {
         Factorized {
@@ -315,7 +322,7 @@ impl PrimeInner {
         (self.computed.len()..)
             .map(|i| self.compute_nth(i))
             .take_while(|&p| p * p <= n)
-            .all(|p| !n.is_multiple_of(&p))
+            .all(|p| !Integer::is_multiple_of(&n, &p))
     }
 
     #[inline]
@@ -323,7 +330,7 @@ impl PrimeInner {
         self.computed
             .iter()
             .take_while(|&&p| p * p <= n)
-            .all(|&p| !n.is_multiple_of(&p))
+            .all(|&p| !Integer::is_multiple_of(&n, &p))
     }
 
     #[inline]

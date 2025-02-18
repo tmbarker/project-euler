@@ -27,7 +27,7 @@ fn largest_palindrome_product(d: u32) -> usize {
             }
         }
     }
-    return n;
+    n
 }
 
 #[test]

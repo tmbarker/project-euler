@@ -14,7 +14,7 @@ fn double(mut digits: Vec<u64>) -> Vec<u64> {
     let mut carry = 0;
 
     for i in 0..digits.len() {
-        digits[i] += digits[i] + carry;
+        digits[i] = 2 * digits[i] + carry;
         carry = digits[i] / RADIX;
         digits[i] %= RADIX;
     }

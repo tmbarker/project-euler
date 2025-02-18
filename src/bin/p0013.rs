@@ -8,7 +8,7 @@ fn compute_sum(input: &str) -> String {
     let numbers: Vec<Vec<u64>> = input
         .trim()
         .lines()
-        .map(|line| parse_rev_digits(line))
+        .map(parse_rev_digits)
         .collect();
 
     let mut digits = VecDeque::with_capacity(10);

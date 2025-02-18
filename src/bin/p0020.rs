@@ -9,7 +9,7 @@ fn main() {
 
 fn factorial_digit_sum(x: u32) -> u32 {
     (1..=x)
-        .map(|n| BigUint::from(n))
+        .map(BigUint::from)
         .fold(num_traits::one::<BigUint>(), |acc, n| acc * n)
         .to_string()
         .chars()
