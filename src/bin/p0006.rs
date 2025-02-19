@@ -1,8 +1,5 @@
-fn main() {
-    println!(
-        "Problem 6: Sum Square Difference => {0}",
-        sum_square_difference(100)
-    );
+fn solve() -> String {
+    sum_square_difference(100).to_string()
 }
 
 fn sum_square_difference(n: usize) -> usize {
@@ -12,7 +9,4 @@ fn sum_square_difference(n: usize) -> usize {
     sum_of_values * sum_of_values - sum_of_square
 }
 
-#[test]
-fn validate() {
-    assert_eq!(sum_square_difference(100), 25164150)
-}
+euler::register_problem!("Sum Square Difference", solve, "25164150");

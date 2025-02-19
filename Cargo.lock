@@ -9,6 +9,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ace50bade8e6234aa140d9a2f552bbee1db4d353f69b8217bc503490fc1a9f26"
 
 [[package]]
+name = "integer"
+version = "0.1.0"
+dependencies = [
+ "num-integer",
+ "num-traits",
+]
+
+[[package]]
 name = "num-bigint"
 version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -43,11 +51,30 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "945462a4b81e43c4e3ba96bd7b49d834c6f61198356aa858733bc4acf3cbe62e"
 
 [[package]]
+name = "prime"
+version = "0.1.0"
+dependencies = [
+ "num-integer",
+ "num-traits",
+]
+
+[[package]]
 name = "project-euler"
 version = "0.1.0"
 dependencies = [
+ "integer",
  "num-bigint",
  "num-integer",
  "num-traits",
  "once_cell",
+ "prime",
+ "seq",
+]
+
+[[package]]
+name = "seq"
+version = "0.1.0"
+dependencies = [
+ "num-integer",
+ "num-traits",
 ]

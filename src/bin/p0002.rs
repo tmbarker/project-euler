@@ -1,11 +1,8 @@
 use num_integer::Integer;
-use utils::seqs::FibonacciIter;
+use seq::FibonacciIter;
 
-fn main() {
-    println!(
-        "Problem 2: Even Fibonacci Numbers => {0}",
-        even_fibonacci(4000000)
-    );
+fn solve() -> String {
+    even_fibonacci(4000000).to_string()
 }
 
 fn even_fibonacci(x: u32) -> u32 {
@@ -15,7 +12,4 @@ fn even_fibonacci(x: u32) -> u32 {
         .sum()
 }
 
-#[test]
-fn validate() {
-    assert_eq!(even_fibonacci(4000000), 4613732);
-}
+euler::register_problem!("Even Fibonacci Numbers", solve, "4613732");

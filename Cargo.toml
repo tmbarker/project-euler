@@ -1,3 +1,5 @@
+[workspace]
+
 [package]
 name = "project-euler"
 authors = ["Trevor Barker <tmbarker9@gmail.com>"]
@@ -6,11 +8,20 @@ version = "0.1.0"
 edition = "2021"
 
 [lib]
-name = "utils"
-path = "src/utils/mod.rs"
+name = "euler"
+path = "src/lib.rs"
 
 [dependencies]
 num-bigint = "0.4.4"
 num-integer = "0.1.45"
 num-traits = "0.2.17"
 once_cell = "1.20.3"
+
+[dependencies.integer]
+path = "./pkg/integer"
+
+[dependencies.prime]
+path = "./pkg/prime"
+
+[dependencies.seq]
+path = "./pkg/seq"

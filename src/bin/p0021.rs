@@ -1,13 +1,10 @@
-﻿use utils::primes::{Factorize, PrimeSeq};
+﻿use prime::{Factorize, PrimeSeq};
 
-fn main() {
-    println!(
-        "Problem 21: Amicable Numbers => {0}",
-        solve(10000)
-    );
+fn solve() -> String {
+    sum_divisors(10000).to_string()
 }
 
-fn solve(n: usize) -> usize {
+fn sum_divisors(n: usize) -> usize {
     let primes_seq = PrimeSeq::new();
     let sum_of_divs = (0..=n)
         .map(|n| n.sum_proper_divisors(&primes_seq))
@@ -21,7 +18,4 @@ fn solve(n: usize) -> usize {
         .sum()
 }
 
-#[test]
-fn validate() {
-    assert_eq!(solve(10000), 31626);
-}
+euler::register_problem!("Amicable Numbers", solve, "31626");

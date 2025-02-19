@@ -1,11 +1,8 @@
 use num_integer::Roots;
 use std::{cmp, iter};
 
-fn main() {
-    println!(
-        "Problem 9: Special Pythagorean Triplet => {0}",
-        find_triplet_product(1000)
-    );
+fn solve() -> String {
+    find_triplet_product(1000).to_string()
 }
 
 fn find_triplet_product(sum: u64) -> u64 {
@@ -20,7 +17,4 @@ fn find_triplet_product(sum: u64) -> u64 {
         .unwrap()
 }
 
-#[test]
-fn validate() {
-    assert_eq!(find_triplet_product(1000), 31875000)
-}
+euler::register_problem!("Special Pythagorean Triplet", solve, "31875000");

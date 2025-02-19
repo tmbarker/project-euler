@@ -1,10 +1,7 @@
-use utils::primes::{Factorize, PrimeSeq};
+use prime::{Factorize, PrimeSeq};
 
-fn main() {
-    println!(
-        "Problem 3: Largest Prime Factor => {0}",
-        largest_prime_factor(600851475143)
-    );
+fn solve() -> String {
+    largest_prime_factor(600851475143).to_string()
 }
 
 fn largest_prime_factor(x: u64) -> u64 {
@@ -14,8 +11,4 @@ fn largest_prime_factor(x: u64) -> u64 {
         .unwrap()
 }
 
-#[test]
-fn validate() {
-    assert_eq!(largest_prime_factor(100), 5);
-    assert_eq!(largest_prime_factor(600851475143), 6857);
-}
+euler::register_problem!("Largest Prime Factor", solve, "6857");

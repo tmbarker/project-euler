@@ -1,5 +1,5 @@
-fn main() {
-    println!("Problem 16: Power Digit Sum => {0}", pow2_digit_sum(1000));
+fn solve() -> String {
+    pow2_digit_sum(1000).to_string()
 }
 
 fn pow2_digit_sum(n: u64) -> u64 {
@@ -27,11 +27,4 @@ fn double(mut digits: Vec<u64>) -> Vec<u64> {
     digits
 }
 
-#[test]
-fn validate() {
-    assert_eq!(pow2_digit_sum(0), 1);
-    assert_eq!(pow2_digit_sum(1), 2);
-    assert_eq!(pow2_digit_sum(2), 4);
-    assert_eq!(pow2_digit_sum(4), 7);
-    assert_eq!(pow2_digit_sum(1000), 1366);
-}
+euler::register_problem!("Power Digit Sum", solve, "1366");

@@ -1,11 +1,8 @@
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
 
-fn main() {
-    println!(
-        "Problem 17: Number Letter Counts => {0}",
-        number_letter_counts(1000)
-    );
+fn solve() -> String {
+    number_letter_counts(1000).to_string()
 }
 
 fn number_letter_counts(n: usize) -> usize {
@@ -53,12 +50,7 @@ fn number_to_word_len(n: usize) -> usize {
     words.len()
 }
 
-#[test]
-fn validate() {
-    assert_eq!(number_to_word_len(115), 20);
-    assert_eq!(number_to_word_len(342), 23);
-    assert_eq!(number_letter_counts(1000), 21124);
-}
+euler::register_problem!("Number Letter Counts", solve, "21124");
 
 static WORD_MAP: Lazy<HashMap<usize, &'static str>> = Lazy::new(|| {
     let mut m = HashMap::new();

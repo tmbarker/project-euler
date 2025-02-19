@@ -1,10 +1,7 @@
 use std::cmp::max;
 
-fn main() {
-    println!(
-        "Problem 18: Maximum Path Sum I => {0}",
-        max_path(parse(INPUT))
-    );
+fn solve() -> String {
+    max_path(parse(INPUT)).to_string()
 }
 
 fn max_path(mut tri: Vec<Vec<u64>>) -> u64 {
@@ -28,6 +25,8 @@ fn parse(input: &str) -> Vec<Vec<u64>> {
         .collect()
 }
 
+euler::register_problem!("Maximum Path Sum I", solve, "1074");
+
 const INPUT: &str = r"
 75
 95 64
@@ -45,8 +44,3 @@ const INPUT: &str = r"
 63 66 04 68 89 53 67 30 73 16 69 87 40 31
 04 62 98 27 23 09 70 98 73 93 38 53 60 04 23
 ";
-
-#[test]
-fn validate() {
-    assert_eq!(max_path(parse(INPUT)), 1074);
-}

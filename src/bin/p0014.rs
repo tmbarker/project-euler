@@ -1,11 +1,8 @@
 use std::collections::HashMap;
-use utils::seqs::CollatzIter;
+use seq::CollatzIter;
 
-fn main() {
-    println!(
-        "Problem 14: Longest Collatz Sequence => {0}",
-        longest_collatz(1000000)
-    );
+fn solve() -> String {
+    longest_collatz(1000000).to_string()
 }
 
 fn longest_collatz(bound: usize) -> usize {
@@ -28,7 +25,4 @@ fn get_length(memo: &mut HashMap<usize, usize>, start: usize) -> usize {
     unreachable!()
 }
 
-#[test]
-fn validate() {
-    assert_eq!(longest_collatz(1000000), 837799)
-}
+euler::register_problem!("Longest Collatz Sequence", solve, "837799");

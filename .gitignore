@@ -1,2 +1,19 @@
-/target
-/.idea
+# Ignore the Rust build output directories
+/target/
+**/target/
+
+# Ignore IDE/editor files
+.vscode/
+.idea/
+
+# Ignore system-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore compiled binaries (if any, depending on your setup)
+*.exe
+*.out
+*.app
+
+# Ignore rust-specific files from non-crate directories
+/Cargo.toml.orig

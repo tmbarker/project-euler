@@ -1,12 +1,9 @@
 use num_bigint::BigUint;
 use num_traits::one;
-use utils::seqs::FibonacciIter;
+use seq::FibonacciIter;
 
-fn main() {
-    println!(
-        "Problem 25: 1000-digit Fibonacci Number => {0}",
-        n_digit_fibonacci(1000)
-    );
+fn solve() -> String {
+    n_digit_fibonacci(1000).to_string()
 }
 
 fn n_digit_fibonacci(d: u32) -> usize {
@@ -17,7 +14,4 @@ fn n_digit_fibonacci(d: u32) -> usize {
         + 1
 }
 
-#[test]
-fn validate() {
-    assert_eq!(n_digit_fibonacci(1000), 4782);
-}
+euler::register_problem!("1000-digit Fibonacci Number", solve, "4782");

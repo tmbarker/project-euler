@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 
-fn main() {
-    println!("Problem 13: Large Sum => {0}", compute_sum(INPUT));
+fn solve() -> String {
+    compute_sum(INPUT)
 }
 
 fn compute_sum(input: &str) -> String {
@@ -39,10 +39,7 @@ fn parse_rev_digits(line: &str) -> Vec<u64> {
         .collect()
 }
 
-#[test]
-fn validate() {
-    assert_eq!(compute_sum(INPUT), "5537376230")
-}
+euler::register_problem!("Large Sum", solve, "5537376230");
 
 const INPUT: &str = r"
 37107287533902102798797998220837590246510135740250

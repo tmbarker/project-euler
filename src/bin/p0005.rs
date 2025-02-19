@@ -1,12 +1,9 @@
-fn main() {
-    println!("Problem 5: Smallest Multiple => {0}", smallest_multiple(20));
+fn solve() -> String {
+    smallest_multiple(20).to_string()
 }
 
 fn smallest_multiple(x: usize) -> usize {
     (1..=x).fold(1, num_integer::lcm)
 }
 
-#[test]
-fn validate() {
-    assert_eq!(smallest_multiple(20), 232792560);
-}
+euler::register_problem!("Smallest Multiple", solve, "232792560");

@@ -1,3 +1,21 @@
+fn solve() -> String {
+    max_window_product(13).to_string()
+}
+
+fn max_window_product(len: usize) -> u64 {
+    DIGITS
+        .chars()
+        .filter_map(|c| c.to_digit(10))
+        .map(|n| n as u64)
+        .collect::<Vec<u64>>()
+        .windows(len)
+        .map(|w| w.iter().product())
+        .max()
+        .unwrap()
+}
+
+euler::register_problem!("Largest Product in a Series", solve, "23514624000");
+
 const DIGITS: &str = r"
 73167176531330624919225119674426574742355349194934
 96983520312774506326239578318016984801869478851843
@@ -20,27 +38,3 @@ const DIGITS: &str = r"
 05886116467109405077541002256983155200055935729725
 71636269561882670428252483600823257530420752963450
 ";
-
-fn main() {
-    println!(
-        "Problem 8: Largest Product in a Series => {0}",
-        max_window_product(13)
-    );
-}
-
-fn max_window_product(len: usize) -> u64 {
-    DIGITS
-        .chars()
-        .filter_map(|c| c.to_digit(10))
-        .map(|n| n as u64)
-        .collect::<Vec<u64>>()
-        .windows(len)
-        .map(|w| w.iter().product())
-        .max()
-        .unwrap()
-}
-
-#[test]
-fn validate() {
-    assert_eq!(max_window_product(13), 23514624000)
-}

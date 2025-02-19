@@ -1,13 +1,10 @@
-use utils::integer::Integer;
-
-fn main() {
-    println!(
-        "Problem 4: Largest Palindrome Product => {0}",
-        largest_palindrome_product(3)
-    );
-}
+use integer::Integer;
 
 const RADIX: usize = 10;
+
+fn solve() -> String {
+    largest_palindrome_product(3).to_string()
+}
 
 fn largest_palindrome_product(d: u32) -> usize {
     let min = RADIX.pow(d - 1);
@@ -30,7 +27,4 @@ fn largest_palindrome_product(d: u32) -> usize {
     n
 }
 
-#[test]
-fn validate() {
-    assert_eq!(largest_palindrome_product(3), 906609);
-}
+euler::register_problem!("Largest Palindrome Product", solve, "906609");

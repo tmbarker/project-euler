@@ -1,5 +1,5 @@
-fn main() {
-    println!("Problem 19: Counting Sundays => {0}", count_sundays());
+fn solve() -> String {
+    count_sundays().to_string()
 }
 
 fn count_sundays() -> usize {
@@ -67,7 +67,4 @@ impl Iterator for SundayIter {
     }
 }
 
-#[test]
-fn validate() {
-    assert_eq!(count_sundays(), 171)
-}
+euler::register_problem!("Counting Sundays", solve, "171");

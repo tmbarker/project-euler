@@ -1,11 +1,8 @@
-use utils::primes::{Factorize, PrimeSeq};
-use utils::seqs::TriangularIter;
+use prime::{Factorize, PrimeSeq};
+use seq::TriangularIter;
 
-fn main() {
-    println!(
-        "Problem 12: Highly Divisible Triangular Number => {0}",
-        triangular_min_divisors(500)
-    );
+fn solve() -> String {
+    triangular_min_divisors(500).to_string()
 }
 
 fn triangular_min_divisors(num_div: u64) -> u64 {
@@ -15,7 +12,4 @@ fn triangular_min_divisors(num_div: u64) -> u64 {
         .unwrap()
 }
 
-#[test]
-fn validate() {
-    assert_eq!(triangular_min_divisors(500), 76576500)
-}
+euler::register_problem!("Highly Divisible Triangular Number", solve, "76576500");
