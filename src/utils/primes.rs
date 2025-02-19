@@ -143,10 +143,49 @@ pub trait Factorize: Integer + FromPrimitive + Clone {
             return Zero::zero();
         }
 
-        // This is an implementation of the Tau function (divisor function)
+        //  This is an implementation of the Tau function (divisor function)
+        //
         self.factorize(ps)
             .map(|factor| (factor.exp as u64) + 1)
             .product()
+    }
+
+    /// Compute the sum of the divisors of the number.
+    fn sum_divisors(&self, ps: &PrimeSeq) -> Self {
+        if self.is_zero() {
+            return Self::zero();
+        }
+
+        //  This computation leverages the below relationship between divisors and
+        //  prime factorization:
+        //      σ(N) = (1 + p1^1 + p1^2 + ...)(1 + p2^1 + p2^2 + ...)
+        //  The above is a product of geometric progressions, where each prime factor contributes:
+        //      1 + p + p^2 + ... = (p^(e + 1) - 1)/(p - 1)
+        //
+        let one: Self = Self::one();
+        self.factorize(ps)
+            .map(|factor| {
+                let den = factor.base.clone() - one.clone();
+                let num = num_traits::pow(factor.base, (factor.exp as usize) + 1) - one.clone();
+                num/den
+            })
+            .fold(Self::one(), |acc, n| acc * n)
+    }
+
+    /// Compute the number of proper divisors of the number.
+    fn num_proper_divisors(&self, ps: &PrimeSeq) -> u64 {
+        if self.is_zero() {
+            return Zero::zero();
+        }
+        self.num_divisors(ps) - 1
+    }
+
+    /// Compute the sum of the proper divisors of the number.
+    fn sum_proper_divisors(&self, ps: &PrimeSeq) -> Self {
+        if self.is_zero() {
+            return Self::zero();
+        }
+        self.sum_divisors(ps) - self.clone()
     }
 }
 
@@ -353,15 +392,15 @@ impl PrimeInner {
 
 #[cfg(test)]
 mod tests {
-    use super::{Factorize, PrimeSeq};
+    use super::{Factorize, PrimeSeq, SEED_PRIMES};
 
     #[test]
     fn prime_seq_iter() {
         assert_eq!(
-            super::SEED_PRIMES,
+            SEED_PRIMES,
             &PrimeSeq::new()
                 .iter()
-                .take(super::SEED_PRIMES.len())
+                .take(SEED_PRIMES.len())
                 .collect::<Vec<_>>()[..]
         )
     }
@@ -369,6 +408,7 @@ mod tests {
     #[test]
     fn is_prime() {
         let primes = PrimeSeq::new();
+
         assert!(!primes.is_prime(0));
         assert!(!primes.is_prime(1));
         assert!(primes.is_prime(2));
@@ -379,29 +419,146 @@ mod tests {
         assert!(primes.is_prime(13));
         assert!(!primes.is_prime(99));
         assert!(!primes.is_prime(100));
+
+        for prime in SEED_PRIMES{
+            assert!(primes.is_prime(*prime));
+        }
     }
 
     #[test]
     fn num_divisor() {
         let pairs = &[
-            (0, 0),
-            (1, 1),
-            (2, 2),
-            (3, 2),
-            (4, 3),
-            (5, 2),
-            (12, 6),
-            (24, 8),
-            (36, 9),
-            (48, 10),
-            (60, 12),
-            (50, 6),
+            (0, 0),    // Defined as 0 for handling edge case
+            (1, 1),    // {1}
+            (2, 2),    // {1, 2}
+            (3, 2),    // {1, 3}
+            (4, 3),    // {1, 2, 4}
+            (5, 2),    // {1, 5}
+            (6, 4),    // {1, 2, 3, 6}
+            (8, 4),    // {1, 2, 4, 8}
+            (9, 3),    // {1, 3, 9}
+            (10, 4),   // {1, 2, 5, 10}
+            (12, 6),   // {1, 2, 3, 4, 6, 12}
+            (16, 5),   // {1, 2, 4, 8, 16}
+            (18, 6),   // {1, 2, 3, 6, 9, 18}
+            (20, 6),   // {1, 2, 4, 5, 10, 20}
+            (24, 8),   // {1, 2, 3, 4, 6, 8, 12, 24}
+            (28, 6),   // {1, 2, 4, 7, 14, 28}
+            (30, 8),   // {1, 2, 3, 5, 6, 10, 15, 30}
+            (36, 9),   // {1, 2, 3, 4, 6, 9, 12, 18, 36}
+            (48, 10),  // {1, 2, 3, 4, 6, 8, 12, 16, 24, 48}
+            (50, 6),   // {1, 2, 5, 10, 25, 50}
+            (60, 12),  // {1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60}
+            (72, 12),  // {1, 2, 3, 4, 6, 8, 9, 12, 18, 24, 36, 72}
+            (84, 12),  // {1, 2, 3, 4, 6, 7, 12, 14, 21, 28, 42, 84}
+            (100, 9),  // {1, 2, 4, 5, 10, 20, 25, 50, 100}
         ];
 
         let ps = PrimeSeq::new();
         for &(n, num_div) in pairs {
             assert_eq!(num_div, n.num_divisors(&ps));
             assert_eq!(num_div, (-n).num_divisors(&ps));
+        }
+    }
+
+    #[test]
+    fn sum_divisor() {
+        let pairs = &[
+            (0, 0),     // Edge case
+            (1, 1),     // {1} -> 1
+            (2, 3),     // {1, 2} -> 3
+            (3, 4),     // {1, 3} -> 4
+            (4, 7),     // {1, 2, 4} -> 7
+            (5, 6),     // {1, 5} -> 6
+            (6, 12),    // {1, 2, 3, 6} -> 12
+            (8, 15),    // {1, 2, 4, 8} -> 15
+            (9, 13),    // {1, 3, 9} -> 13
+            (10, 18),   // {1, 2, 5, 10} -> 18
+            (12, 28),   // {1, 2, 3, 4, 6, 12} -> 28
+            (16, 31),   // {1, 2, 4, 8, 16} -> 31
+            (18, 39),   // {1, 2, 3, 6, 9, 18} -> 39
+            (20, 42),   // {1, 2, 4, 5, 10, 20} -> 42
+            (24, 60),   // {1, 2, 3, 4, 6, 8, 12, 24} -> 60
+            (28, 56),   // {1, 2, 4, 7, 14, 28} -> 56 (perfect number * 2)
+            (30, 72),   // {1, 2, 3, 5, 6, 10, 15, 30} -> 72
+            (36, 91),   // {1, 2, 3, 4, 6, 9, 12, 18, 36} -> 91
+            (48, 124),  // {1, 2, 3, 4, 6, 8, 12, 16, 24, 48} -> 124
+            (50, 93),   // {1, 2, 5, 10, 25, 50} -> 93
+            (60, 168),  // {1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60} -> 168
+            (72, 195),  // {1, 2, 3, 4, 6, 8, 9, 12, 18, 24, 36, 72} -> 195
+            (100, 217), // {1, 2, 4, 5, 10, 20, 25, 50, 100} -> 217
+        ];
+
+        let ps = PrimeSeq::new();
+        for &(n, sum_div) in pairs {
+            assert_eq!(sum_div, n.sum_divisors(&ps));
+        }
+    }
+
+    #[test]
+    fn num_proper_divisor() {
+        let pairs = &[
+            (0, 0),     // Edge case
+            (1, 0),     // Proper divisors: {} -> 0
+            (2, 1),     // {1}
+            (3, 1),     // {1}
+            (4, 2),     // {1, 2}
+            (5, 1),     // {1}
+            (6, 3),     // {1, 2, 3}
+            (8, 3),     // {1, 2, 4}
+            (9, 2),     // {1, 3}
+            (10, 3),    // {1, 2, 5}
+            (12, 5),    // {1, 2, 3, 4, 6}
+            (16, 4),    // {1, 2, 4, 8}
+            (18, 5),    // {1, 2, 3, 6, 9}
+            (20, 5),    // {1, 2, 4, 5, 10}
+            (24, 7),    // {1, 2, 3, 4, 6, 8, 12}
+            (28, 5),    // {1, 2, 4, 7, 14}
+            (30, 7),    // {1, 2, 3, 5, 6, 10, 15}
+            (36, 8),    // {1, 2, 3, 4, 6, 9, 12, 18}
+            (48, 9),    // {1, 2, 3, 4, 6, 8, 12, 16, 24}
+            (50, 5),    // {1, 2, 5, 10, 25}
+            (60, 11),   // {1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30}
+            (100, 8),   // {1, 2, 4, 5, 10, 20, 25, 50}
+        ];
+
+        let ps = PrimeSeq::new();
+        for &(n, num_div) in pairs {
+            assert_eq!(num_div, n.num_proper_divisors(&ps));
+            assert_eq!(num_div, (-n).num_proper_divisors(&ps));
+        }
+    }
+
+    #[test]
+    fn sum_proper_divisor() {
+        let pairs = &[
+            (0, 0),     // Edge case
+            (1, 0),     // Proper divisors: {} -> sum: 0
+            (2, 1),     // {1} -> 1
+            (3, 1),     // {1} -> 1
+            (4, 3),     // {1, 2} -> 3
+            (5, 1),     // {1} -> 1
+            (6, 6),     // {1, 2, 3} -> 6 (perfect number)
+            (8, 7),     // {1, 2, 4} -> 7
+            (9, 4),     // {1, 3} -> 4
+            (10, 8),    // {1, 2, 5} -> 8
+            (12, 16),   // {1, 2, 3, 4, 6} -> 16
+            (16, 15),   // {1, 2, 4, 8} -> 15
+            (18, 21),   // {1, 2, 3, 6, 9} -> 21
+            (20, 22),   // {1, 2, 4, 5, 10} -> 22
+            (24, 36),   // {1, 2, 3, 4, 6, 8, 12} -> 36
+            (28, 28),   // {1, 2, 4, 7, 14} -> 28 (perfect number)
+            (30, 42),   // {1, 2, 3, 5, 6, 10, 15} -> 42
+            (36, 55),   // {1, 2, 3, 4, 6, 9, 12, 18} -> 55
+            (48, 76),   // {1, 2, 3, 4, 6, 8, 12, 16, 24} -> 76
+            (50, 43),   // {1, 2, 5, 10, 25} -> 43
+            (60, 108),  // {1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30} -> 108
+            (100, 117), // {1, 2, 4, 5, 10, 20, 25, 50} -> 117
+        ];
+
+        let ps = PrimeSeq::new();
+        for &(n, sum_div) in pairs {
+            assert_eq!(sum_div, n.sum_proper_divisors(&ps));
         }
     }
 
