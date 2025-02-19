@@ -2,6 +2,9 @@
 /target/
 **/target/
 
+# Ignore cache directory, mostly used for input files
+/cache/
+
 # Ignore IDE/editor files
 .vscode/
 .idea/
