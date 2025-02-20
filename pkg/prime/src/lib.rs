@@ -49,9 +49,9 @@ impl PrimeSeq {
         self.data.borrow_mut().compute_nth(n)
     }
 
-    /// Compute if a number is prime.
+    /// Evaluate if a number is prime.
     #[inline]
-    pub fn is_prime(&self, n: u64) -> bool {
+    pub fn contains(&self, n: u64) -> bool {
         self.data.borrow_mut().check_prime(n)
     }
 
@@ -409,19 +409,19 @@ mod tests {
     fn is_prime() {
         let primes = PrimeSeq::new();
 
-        assert!(!primes.is_prime(0));
-        assert!(!primes.is_prime(1));
-        assert!(primes.is_prime(2));
-        assert!(primes.is_prime(3));
-        assert!(primes.is_prime(5));
-        assert!(primes.is_prime(7));
-        assert!(primes.is_prime(11));
-        assert!(primes.is_prime(13));
-        assert!(!primes.is_prime(99));
-        assert!(!primes.is_prime(100));
+        assert!(!primes.contains(0));
+        assert!(!primes.contains(1));
+        assert!(primes.contains(2));
+        assert!(primes.contains(3));
+        assert!(primes.contains(5));
+        assert!(primes.contains(7));
+        assert!(primes.contains(11));
+        assert!(primes.contains(13));
+        assert!(!primes.contains(99));
+        assert!(!primes.contains(100));
 
         for prime in SEED_PRIMES{
-            assert!(primes.is_prime(*prime));
+            assert!(primes.contains(*prime));
         }
     }
 
