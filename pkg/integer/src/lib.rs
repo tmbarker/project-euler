@@ -2,14 +2,29 @@ use num_traits::{FromPrimitive, One, ToPrimitive, Zero};
 
 /// Super trait extension of `num_integer::Integer`, which is useful for Project Euler problems.
 pub trait Integer: num_integer::Integer + Clone + FromPrimitive + ToPrimitive {
+    /// Creates an Iterator that enumerates each digit, starting with the least significant digit.
     #[inline]
     fn into_digits(self, radix: Self) -> Digits<Self> {
         Digits::new(self, radix)
     }
 
+    /// Creates an Iterator that enumerates each digit, starting with the least significant digit.
     #[inline]
     fn to_digits(&self, radix: Self) -> Digits<Self> {
         Digits::new(self.clone(), radix)
+    }
+
+    /// Constructs an integer from a digit Iterator. Note that the Iterator should yield the
+    /// digits from least significant to most significant.
+    #[inline]
+    fn from_digits<T: Iterator<Item = Self>>(digits: T, radix: Self) -> Self {
+        let mut result = Self::zero();
+        let mut order = Self::one();
+        for d in digits {
+            result = result + order.clone() * d;
+            order = order * radix.clone();
+        }
+        result
     }
 
     /// Returns `true` if the number is unchanged when its digits are reversed.
@@ -57,7 +72,7 @@ pub struct Digits<T> {
     num: T,
     /// The base of the integer representation.
     radix: T,
-    /// The order of magnitude of the integer, given the radix.
+    /// The order of magnitude of the digit, given the radix.
     order: T,
 }
 
