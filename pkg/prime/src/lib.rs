@@ -121,6 +121,7 @@ impl Iterator for PrimeSeqIter {
 }
 
 /// A factor of a number, specifying the base and exponent of the factor.
+#[derive(Eq, PartialEq, Hash)]
 pub struct Factor<T> {
     pub base: T,
     pub exp: i32,
