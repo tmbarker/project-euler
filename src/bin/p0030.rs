@@ -5,7 +5,7 @@ fn solve() -> String {
     //  from a single digit, and then figuring out how many digits can be summed before they exceed
     //  the maximum magnitude of a number with that many digits:
     //      9^5 = 59049
-    //      n * 59049 <= 10^n
+    //      n * 59049 <= 10^n - 1
     //      n <= 6
     //
     (2..6 * 59049)
