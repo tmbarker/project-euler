@@ -1,0 +1,9 @@
+[package]
+name = "iter"
+version = "0.1.0"
+authors = ["Trevor Barker <tmbarker9@gmail.com>"]
+repository = "https://github.com/tmbarker/project-euler"
+workspace = "../.."
+edition = "2021"
+
+[dependencies]

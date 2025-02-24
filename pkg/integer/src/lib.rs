@@ -164,7 +164,7 @@ mod tests {
 
         assert_eq!(1234, usize::from_digits(vec![4, 3, 2, 1].into_iter(), RADIX));
         assert_eq!(1000, usize::from_digits(vec![0, 0, 0, 1].into_iter(), RADIX));
-        assert_eq!(9876, usize::from_digits(vec![9, 8, 7, 6].into_iter(), RADIX));
+        assert_eq!(9876, usize::from_digits(vec![6, 7, 8, 9].into_iter(), RADIX));
         assert_eq!(2112, usize::from_digits(vec![2, 1, 1, 2].into_iter(), RADIX));
     }
 
@@ -174,7 +174,7 @@ mod tests {
 
         assert_eq!(4321, usize::from_rev_digits(vec![4, 3, 2, 1].into_iter(), RADIX));
         assert_eq!(0001, usize::from_rev_digits(vec![0, 0, 0, 1].into_iter(), RADIX));
-        assert_eq!(6789, usize::from_rev_digits(vec![9, 8, 7, 6].into_iter(), RADIX));
+        assert_eq!(6789, usize::from_rev_digits(vec![6, 7, 8, 9].into_iter(), RADIX));
         assert_eq!(2112, usize::from_rev_digits(vec![2, 1, 1, 2].into_iter(), RADIX));
     }
 
