@@ -27,6 +27,18 @@ pub trait Integer: num_integer::Integer + Clone + FromPrimitive + ToPrimitive {
         result
     }
 
+    /// Constructs an integer from a digit Iterator. Note that the Iterator should yield the
+    /// digits from most significant to least significant.
+    #[inline]
+    fn from_rev_digits<T: Iterator<Item = Self>>(digits: T, radix: Self) -> Self {
+        let mut result = Self::zero();
+        for d in digits {
+            result = result * radix.clone();
+            result = result + d;
+        }
+        result
+    }
+
     /// Returns `true` if the number is unchanged when its digits are reversed.
     fn is_palindromic(&self, radix: Self) -> bool {
         let mut digits = self.to_digits(radix);
@@ -144,6 +156,26 @@ mod tests {
         assert_eq!(r_iter.next_back(), Some(2));
         assert_eq!(r_iter.next_back(), Some(3));
         assert_eq!(r_iter.next_back(), Some(4));
+    }
+
+    #[test]
+    fn from_digits() {
+        const RADIX: usize = 10;
+
+        assert_eq!(1234, usize::from_digits(vec![4, 3, 2, 1].into_iter(), RADIX));
+        assert_eq!(1000, usize::from_digits(vec![0, 0, 0, 1].into_iter(), RADIX));
+        assert_eq!(9876, usize::from_digits(vec![9, 8, 7, 6].into_iter(), RADIX));
+        assert_eq!(2112, usize::from_digits(vec![2, 1, 1, 2].into_iter(), RADIX));
+    }
+
+    #[test]
+    fn from_rev_digits() {
+        const RADIX: usize = 10;
+
+        assert_eq!(4321, usize::from_rev_digits(vec![4, 3, 2, 1].into_iter(), RADIX));
+        assert_eq!(0001, usize::from_rev_digits(vec![0, 0, 0, 1].into_iter(), RADIX));
+        assert_eq!(6789, usize::from_rev_digits(vec![9, 8, 7, 6].into_iter(), RADIX));
+        assert_eq!(2112, usize::from_rev_digits(vec![2, 1, 1, 2].into_iter(), RADIX));
     }
 
     #[test]
