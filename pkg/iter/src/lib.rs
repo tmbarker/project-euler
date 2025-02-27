@@ -11,9 +11,11 @@ pub struct PermutationIter<'a, T> {
 impl<'a, T> PermutationIter<'a, T> {
     pub fn new(elements: &'a [T], r: usize) -> Self {
         assert!(r <= elements.len());
+
         let n = elements.len();
         let indices = (0..n).collect();
         let cycles = (0..r).map(|i| n - i).collect();
+
         Self {
             elements,
             indices,
@@ -68,20 +70,68 @@ impl<'a, T: Clone> Iterator for PermutationIter<'a, T> {
     }
 }
 
-impl<'a, T: Clone> ExactSizeIterator for PermutationIter<'a, T> {
-    fn len(&self) -> usize {
-        let n = self.elements.len();
-        let r = self.r;
+impl<'a, T: Clone> FusedIterator for PermutationIter<'a, T> {}
 
-        if r == 0 {
-            return 1;
+pub struct CombinationIter<'a, T> {
+    elements: &'a [T],
+    indices: Vec<usize>,
+    k: usize,
+    consumed: bool,
+}
+
+impl<'a, T> CombinationIter<'a, T> {
+    pub fn new(elements: &'a [T], k: usize) -> Self {
+        assert!(k <= elements.len());
+        Self {
+            elements,
+            indices: (0..k).collect(),
+            k,
+            consumed: false,
         }
-
-        (n - r + 1..=n).product()
     }
 }
 
-impl<'a, T: Clone> FusedIterator for PermutationIter<'a, T> {}
+impl<'a, T: Clone> Iterator for CombinationIter<'a, T> {
+    type Item = Vec<T>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.consumed {
+            return None
+        }
+
+        if self.k == 0 {
+            self.consumed = true;
+            return Some(vec![]);
+        }
+
+        let combination = self
+            .indices
+            .iter()
+            .map(|&i| self.elements[i].clone())
+            .collect::<Vec<_>>();
+
+        let mut i = self.k;
+        while i > 0 {
+            i -= 1;
+            if self.indices[i] != i + self.elements.len() - self.k {
+                break;
+            }
+        }
+
+        if self.indices[i] == i + self.elements.len() - self.k {
+            self.consumed = true;
+        } else {
+            self.indices[i] += 1;
+            for j in i + 1..self.k {
+                self.indices[j] = self.indices[j - 1] + 1;
+            }
+        }
+
+        Some(combination)
+    }
+}
+
+impl<'a, T: Clone> FusedIterator for CombinationIter<'a, T> {}
 
 #[cfg(test)]
 mod tests {
@@ -148,11 +198,39 @@ mod tests {
     }
 
     #[test]
-    fn permutation_iter_len() {
-        let elements = vec!['A', 'B', 'C'];
-        let perms = PermutationIter::new(&elements, 2);
-        let actual = perms.len();
+    fn combination_iter_full() {
+        let elements = vec!['A', 'B', 'C', 'D'];
+        let combs = CombinationIter::new(&elements, 4);
+        let actual: Vec<Vec<char>> = combs.collect();
+        let expected = vec![vec!['A', 'B', 'C', 'D']];
 
-        assert_eq!(actual, 6);
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn combination_iter_partial() {
+        let elements = vec!['A', 'B', 'C', 'D'];
+        let combs = CombinationIter::new(&elements, 2);
+        let actual: Vec<Vec<char>> = combs.collect();
+        let expected = vec![
+            vec!['A', 'B'],
+            vec!['A', 'C'],
+            vec!['A', 'D'],
+            vec!['B', 'C'],
+            vec!['B', 'D'],
+            vec!['C', 'D'],
+        ];
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn combination_iter_zero() {
+        let elements = vec!['A', 'B', 'C', 'D'];
+        let combs = CombinationIter::new(&elements, 0);
+        let actual: Vec<Vec<char>> = combs.collect();
+        let expected = vec![Vec::<char>::new()];
+
+        assert_eq!(actual, expected);
     }
 }

@@ -1,5 +1,5 @@
 ﻿use integer::Integer;
-use iter::PermutationIter;
+use iter::CombinationIter;
 use prime::PrimeSeq;
 use std::collections::HashMap;
 
@@ -21,11 +21,8 @@ fn solve() -> String {
         .collect();
 
     for group in prime_sets{
-        for (perm, _) in PermutationIter::new(&group, 3){
-            let mut seq = perm
-                .into_iter()
-                .collect::<Vec<_>>();
-
+        for comb in CombinationIter::new(&group, 3){
+            let mut seq = comb;
             seq.sort();
             let a = seq[0];
             let b = seq[1];
